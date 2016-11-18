@@ -240,6 +240,8 @@ class cqssc extends Component{
         //   xianshi = '期总和';
         //let zhong =':'+(dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中';
         zhong1 = (dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中,  ';
+        if(global.pushu==ndx.length)
+          tempShow[i]['dx']=false;
         //awardInfo.push('第'+this.state.serverResult.current.periodDate+xianshi+zhong);
         if((ndx).length>1)
         {
@@ -294,6 +296,8 @@ class cqssc extends Component{
       else
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-nds.length];
+        if(global.pushu==nds.length)
+          tempShow[i]['ds']=false;
         // let xianshi;
         // if(i<QIUNUMBER)
         //   xianshi = '期第'+(i+1)+'球';

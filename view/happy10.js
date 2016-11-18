@@ -257,6 +257,8 @@ class Happy extends Component{
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-ndx.length];
         zhong1 = (dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中,  ';
+        if(global.pushu==ndx.length)
+          tempShow[i]['dx']=false;        
         if(ndx.length>1)
         {
          // console.log('第'+(i+1)+'球大小没中奖');
@@ -313,6 +315,8 @@ class Happy extends Component{
         xiadan = xiadan+this.state.touzhu[global.pushu-nds.length];
           zhong2 = (ds==0?'单':'双')+this.state.touzhu[global.pushu-nds.length]+'不中,  ';
          // awardInfo.push('第'+this.state.serverResult.current.periodDate+'期第'+(i+1)+'球'+zhong);
+        if(global.pushu==nds.length)
+          tempShow[i]['ds']=false;         
         if(nds.length>1)
         {
          // console.log('第'+(i+1)+'球大小没中奖');
@@ -367,6 +371,8 @@ class Happy extends Component{
         xiadan = xiadan+this.state.touzhu[global.pushu-nwdx.length];
           //let zhong =':尾'+(wdx==0?'大':'小')+this.state.touzhu[global.pushu-nwdx.length]+'不中';
           zhong3 = '尾'+(wdx==0?'大':'小')+this.state.touzhu[global.pushu-nwdx.length]+'不中,  ';
+        if(global.pushu==nwdx.length)
+          tempShow[i]['wdx']=false;  
          // awardInfo.push('第'+this.state.serverResult.current.periodDate+'期第'+(i+1)+'球'+zhong);        
         if(nwdx.length>1)
         {
@@ -419,6 +425,8 @@ class Happy extends Component{
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-nhs.length];
           zhong4 ='合'+(hs==0?'单':'双')+this.state.touzhu[global.pushu-nhs.length]+'不中';
+        if(global.pushu==nhs.length)
+          tempShow[i]['hs']=false; 
          // awardInfo.push('第'+this.state.serverResult.current.periodDate+'期第'+(i+1)+'球'+zhong);        
         if(nhs.length>1)
         {

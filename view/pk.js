@@ -226,6 +226,8 @@ class pk extends Component{
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-ndx.length];
         zhong1 = (dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中,  ';
+        if(global.pushu==ndx.length)
+          tempShow[i]['dx']=false;  
         //let zhong =':'+(dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中';
         //awardInfo.push('第'+this.state.serverResult.current.periodNumber+'期第'+(i+1)+'名'+zhong);
         if((ndx).length>1)
@@ -282,6 +284,8 @@ class pk extends Component{
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-nds.length];
         zhong2 = (ds==0?'单':'双')+this.state.touzhu[global.pushu-nds.length]+'不中,  ';
+        if(global.pushu==nds.length)
+          tempShow[i]['ds']=false;  
         //  let zhong =':' +(ds==0?'单':'双')+this.state.touzhu[global.pushu-nds.length]+'不中';
         //  awardInfo.push('第'+this.state.serverResult.current.periodNumber+'期第'+(i+1)+'名'+zhong);
         if(nds.length>1)
@@ -338,6 +342,8 @@ class pk extends Component{
           xiadan = xiadan+this.state.touzhu[global.pushu-nhs.length];
             //let zhong =':'+(hs==0?'龙':'虎')+this.state.touzhu[global.pushu-nhs.length]+'不中';
             zhong4 =(hs==0?'龙':'虎')+this.state.touzhu[global.pushu-nhs.length]+'不中';
+        if(global.pushu==nhs.length)
+          tempShow[i]['hs']=false;             
            // awardInfo.push('第'+this.state.serverResult.current.periodNumber+'期第'+(i+1)+'名'+zhong);        
           if(nhs.length>1)
           {

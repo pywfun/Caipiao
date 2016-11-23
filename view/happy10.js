@@ -25,7 +25,7 @@ var url = "http://www.1396p.com/gdkl10/ajax?ajaxhandler=getgdkl10awarddata";
 var backupDx=[],backupDs=[],backupWdx=[],backupHs=[];
 var result , countDownTime ;
 var awardInfo =[];
-var showQiuORNot=[],LastWin=[];
+var showQiuORNot=[],LastWin=[],ZCOrN = [], NShow = [];
 class Button extends Component{
   render() {
     return (
@@ -66,6 +66,7 @@ class Happy extends Component{
       ying:0,
       showQiuORNot:[],
       backupShow:[],
+      xintouzhu:[],
     };
   }
   componentDidMount() {
@@ -105,6 +106,29 @@ class Happy extends Component{
     //let newArry = this.removeItem(arr,arr[useArry]);
     return select;
   }
+  NGetArray(arr,times){
+    let length ,useArry, select;
+    let items=new Array(),result=new Array();
+    for(let i=0;i<times;i++)
+    {
+      length = arr.length ;
+      useArry = Math.ceil(Math.random()*length);
+      select = (arr)[useArry-1];
+      (arr).splice(useArry-1,1);
+      items.push(select);
+    }
+
+    for(let j=0;j<global.shoucicishu;j++)
+    {
+      length = items.length ;
+      useArry = Math.ceil(Math.random()*length);
+      select = (items)[useArry-1];
+      (items).splice(useArry-1,1); 
+      result.push(select);     
+    }
+    //let newArry = this.removeItem(arr,arr[useArry]);
+    return result;
+  }  
   getDateFormServer(){
       fetch(url)
         .then((response) => response.json())
@@ -153,6 +177,27 @@ class Happy extends Component{
     }
     return temp;
   }
+    prefix(num, val) {
+      return (new Array(num).join('0') + val).slice(-num);
+  }  
+  makeNshowArray()
+  {
+    let Max=Math.pow(2,global.bhpushu); 
+    let result = new Array();
+    var temp = [0,0,0,0,0,0,0];
+    for(let i=0;i<Max;i++)
+    {
+      let num = this.prefix(global.bhpushu,i.toString(2));
+      temp = num.split("");
+      result.push(temp);     
+    }
+
+    if(global.bhpushu>7){
+      return this.NGetArray(result,60);
+    }
+    else
+       return this.NGetArray(result,30);   
+  }
   gotoAward(awardNumbers){
     if(true)
     {
@@ -178,6 +223,7 @@ class Happy extends Component{
     let ndx = new Array(),nds= new Array(),nwdx= new Array(),nhs= new Array();
     award = award.split(',');
     let ying=0,xiadan=0;
+    let newDx,newDs,newWdx,newHs;
     if(localAward.length==0)
     {
       Alert.alert("请先开始");
@@ -194,13 +240,72 @@ class Happy extends Component{
       nwdx = (localAward[i]['wdx']).slice();
       nhs = (localAward[i]['hs']).slice();
       let awardNum = Number.parseInt(award[i]);
-      let dx = awardNum<=10?0:1;
-      let ds = awardNum%2==1?1:0;
-      let wdx = (awardNum-(Number.parseInt(awardNum/10)*10))<=4?0:1;
-      let hs = (awardNum-(Number.parseInt(awardNum/10)*9))%2==1?1:0;
+      let dx = awardNum<=10?0:1;//1是大
+      let ds = awardNum%2==1?1:0;//1是单
+      let wdx = (awardNum-(Number.parseInt(awardNum/10)*10))<=4?0:1;//1是尾大
+      let hs = (awardNum-(Number.parseInt(awardNum/10)*9))%2==1?1:0;//1是合单
       let info = '第'+this.state.serverResult.current.periodDate+'期第'+(i+1)+'球:';
       let zhong1="",zhong2="",zhong3="",zhong4="";
-      if(Number.parseInt(localAward[i]['dx'][0])==dx||tempShow[i]['dx']==false)
+      
+      newDx = NShow[i]['dx'];
+      newDs = NShow[i]['ds'];
+      newWdx = NShow[i]['wdx'];
+      newHs = NShow[i]['hs'];   
+
+
+      if(ZCOrN[i]['dx']===0)
+      {
+          let tempArry = newDx;
+          let sumArray = this.sumArray(tempArry);
+          let bencixiadn = Math.abs(sumArray)*this.state.xintouzhu[global.bhpushu-(tempArry[0]).length];
+
+          xiadan += bencixiadn;
+          if((sumArray>0&&dx==1)||(sumArray<0&&dx==0)||(sumArray==0))//买
+          {
+            ying +=  bencixiadn*global.peilv;
+            zhong1 = (dx==1?'大':'小')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')中,  ';
+          }
+          else
+          {
+              zhong1 = (dx==0?'大':'小')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')不中,  ';
+          }
+          for(let i=tempArry.length-1;i>=0;i--)
+          {
+            if(tempArry[i][0]==dx)
+            {
+              tempArry.splice(i,1);
+            }
+          }
+
+          if(tempArry.length>0&&(tempArry[0]).length>1)
+          {
+            for(let i=0;i<tempArry.length;i++)
+            {
+              (tempArry[i]).splice(0,1);
+            }
+          }
+          else  //特殊的结束
+          {
+            tempShow[i]['dx']=false;
+            ZCOrN[i]['dx'] = 1;
+            if(this.state.stop)
+            {
+              ndx=[undefined];
+              if((this.state.backupShow[i]['dx']).length!=0)
+              {
+                (global.jiangchiBackup).push((this.state.backupShow[i]['dx']).slice());
+                this.state.backupShow[i]['dx']=[]; 
+              } 
+            }
+            else
+            {
+              ndx = this.geOneArray();
+              (global.jiangchiBackup).push((this.state.backupShow[i]['dx']).slice());
+              this.state.backupShow[i]['dx'] = ndx.slice(); 
+            }           
+          }          
+      }
+      else if(Number.parseInt(localAward[i]['dx'][0])==dx||tempShow[i]['dx']==false)
       {
           if(tempShow[i]['dx']==false&&this.state.stop)
           {
@@ -217,28 +322,6 @@ class Happy extends Component{
             xiadan = xiadan+this.state.touzhu[global.pushu-ndx.length];
             ying +=  this.state.touzhu[global.pushu-ndx.length] * global.peilv;
             tempShow[i]['dx']=false;
-            /*
-            if((this.state.daxiao).length!=0)
-            {
-             // console.log('this.state.daxiao 还有',(this.state.daxiao).length);
-             // console.log('backupDx 还有',backupDx.length);
-              ndx = this.geOneArrayFrom(this.state.daxiao);
-             // backupDx.push(ndx);
-             // daxiaoA = this.removeItem(this.state.daxiao,ndx);
-              //localAward[i]['dx'] = ndx;
-            }
-            else{
-             // console.log('this.state.daxiao 用完！！！！！！！！！！！！！！');
-             // console.log('backupDx 还有',backupDx.length);
-             // this.state.daxiao = backupDx;
-             // backupDx=[];
-              ndx = this.geOneArrayFrom(this.state.daxiao);            
-            //  backupDx.push(ndx);
-            //  daxiaoA = this.removeItem(this.state.daxiao,ndx);
-              //localAward[i]['dx'] = ndx;
-             // console.log('localAward dx',localAward[i]['dx']);            
-            }
-            */
             if(this.state.stop)
             {
               ndx=[undefined];
@@ -261,13 +344,13 @@ class Happy extends Component{
           tempShow[i]['dx']=false;        
         if(ndx.length>1)
         {
-         // console.log('第'+(i+1)+'球大小没中奖');
-         // console.log(localAward[i]['dx']);
-          //let tempdx = ndx;
-          ndx.splice(0,1);
-         // ndx = tempdx;
-         // console.log(localAward[i]['dx']);
-        //  daxiaoA = this.state.daxiao;
+          if(ndx.length>(global.pushu - global.zcpushu)+1)
+            ndx.splice(0,1);
+          else
+          {
+            ZCOrN[i]['dx'] = 0;
+            NShow[i]['dx'] = this.makeNshowArray();
+          }
         }
         else{
               ndx = this.geOneArray();
@@ -276,7 +359,60 @@ class Happy extends Component{
         }        
       }
 
-      if(Number.parseInt(localAward[i]['ds'][0])==ds||tempShow[i]['ds']==false)
+
+      if(ZCOrN[i]['ds']===0)
+      {
+          let tempArry = newDs;
+          let sumArray = this.sumArray(tempArry);
+          let bencixiadn = Math.abs(sumArray)*this.state.xintouzhu[global.bhpushu-(tempArry[0]).length];
+
+          xiadan += bencixiadn;
+          if((sumArray>0&&ds==1)||(sumArray<0&&ds==0)||(sumArray==0))//买
+          {
+            ying +=  bencixiadn*global.peilv;
+            zhong2 = (ds==1?'单':'双')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')中,  ';
+          }
+          else
+          {
+              zhong2 = (ds==0?'单':'双')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')不中,  ';
+          }
+          for(let i=tempArry.length-1;i>=0;i--)
+          {
+            if(tempArry[i][0]==ds)
+            {
+              tempArry.splice(i,1);
+            }
+          }
+
+          if(tempArry.length>0&&(tempArry[0]).length>1)
+          {
+            for(let i=0;i<tempArry.length;i++)
+            {
+              (tempArry[i]).splice(0,1);
+            }
+          }
+          else  //特殊的结束
+          {
+            tempShow[i]['ds']=false;
+            ZCOrN[i]['ds'] = 1;
+            if(this.state.stop)
+            {
+              nds=[undefined];
+              if((this.state.backupShow[i]['ds']).length!=0)
+              {
+                (global.jiangchiBackup).push((this.state.backupShow[i]['ds']).slice());
+                this.state.backupShow[i]['ds']=[]; 
+              } 
+            }
+            else
+            {
+              nds = this.geOneArray();
+              (global.jiangchiBackup).push((this.state.backupShow[i]['ds']).slice());
+              this.state.backupShow[i]['ds'] = nds.slice(); 
+            }           
+          }          
+      }
+      else if(Number.parseInt(localAward[i]['ds'][0])==ds||tempShow[i]['ds']==false)
       {
           if(tempShow[i]['ds']==false&&this.state.stop)
           {
@@ -319,13 +455,13 @@ class Happy extends Component{
           tempShow[i]['ds']=false;         
         if(nds.length>1)
         {
-         // console.log('第'+(i+1)+'球大小没中奖');
-         // console.log(localAward[i]['dx']);
-          //let tempdx = ndx;
-          nds.splice(0,1);
-         // ndx = tempdx;
-         // console.log(localAward[i]['dx']);
-        //  danshuangA = this.state.danshuang;
+          if(nds.length>(global.pushu - global.zcpushu)+1)
+            nds.splice(0,1);
+          else
+          {
+            ZCOrN[i]['ds'] = 0;
+            NShow[i]['ds'] = this.makeNshowArray();
+          }
         }
         else{
               nds = this.geOneArray();
@@ -333,7 +469,63 @@ class Happy extends Component{
               this.state.backupShow[i]['ds'] = nds.slice(); 
         }        
       }
-      if(Number.parseInt(localAward[i]['wdx'][0])==wdx||tempShow[i]['wdx']==false)
+
+
+
+
+      if(ZCOrN[i]['wdx']===0)
+      {
+          let tempArry = newWdx;
+          let sumArray = this.sumArray(tempArry);
+          let bencixiadn = Math.abs(sumArray)*this.state.xintouzhu[global.bhpushu-(tempArry[0]).length];
+
+          xiadan += bencixiadn;
+          if((sumArray>0&&wdx==1)||(sumArray<0&&wdx==0)||(sumArray==0))//买
+          {
+            ying +=  bencixiadn*global.peilv;
+            zhong3 = (wdx==1?'尾大':'尾小')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')中,  ';
+          }
+          else
+          {
+              zhong3 = (wdx==0?'尾大':'尾小')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')不中,  ';
+          }
+          for(let i=tempArry.length-1;i>=0;i--)
+          {
+            if(tempArry[i][0]==wdx)
+            {
+              tempArry.splice(i,1);
+            }
+          }
+
+          if(tempArry.length>0&&(tempArry[0]).length>1)
+          {
+            for(let i=0;i<tempArry.length;i++)
+            {
+              (tempArry[i]).splice(0,1);
+            }
+          }
+          else  //特殊的结束
+          {
+            tempShow[i]['wdx']=false;
+            ZCOrN[i]['wdx'] = 1;
+            if(this.state.stop)
+            {
+              nwdx=[undefined];
+              if((this.state.backupShow[i]['wdx']).length!=0)
+              {
+                (global.jiangchiBackup).push((this.state.backupShow[i]['wdx']).slice());
+                this.state.backupShow[i]['wdx']=[]; 
+              } 
+            }
+            else
+            {
+              nwdx = this.geOneArray();
+              (global.jiangchiBackup).push((this.state.backupShow[i]['wdx']).slice());
+              this.state.backupShow[i]['wdx'] = nwdx.slice(); 
+            }           
+          }          
+      }      
+      else if(Number.parseInt(localAward[i]['wdx'][0])==wdx||tempShow[i]['wdx']==false)
       {
           if(tempShow[i]['wdx']==false&&this.state.stop)
           {
@@ -376,13 +568,13 @@ class Happy extends Component{
          // awardInfo.push('第'+this.state.serverResult.current.periodDate+'期第'+(i+1)+'球'+zhong);        
         if(nwdx.length>1)
         {
-         // console.log('第'+(i+1)+'球大小没中奖');
-         // console.log(localAward[i]['dx']);
-          //let tempdx = ndx;
-          nwdx.splice(0,1);
-         // ndx = tempdx;
-         // console.log(localAward[i]['dx']);
-        //  weidaxiaoA = this.state.weidaxiao;
+          if(nwdx.length>(global.pushu - global.zcpushu)+1)
+            nwdx.splice(0,1);
+          else
+          {
+            ZCOrN[i]['wdx'] = 0;
+            NShow[i]['wdx'] = this.makeNshowArray();
+          }
         }
         else{
               nwdx = this.geOneArray();
@@ -390,7 +582,61 @@ class Happy extends Component{
               this.state.backupShow[i]['wdx'] = nwdx.slice();
         }        
       }
-      if(Number.parseInt(localAward[i]['hs'][0])==hs||tempShow[i]['hs']==false)
+
+
+      if(ZCOrN[i]['hs']===0)
+      {
+          let tempArry = newHs;
+          let sumArray = this.sumArray(tempArry);
+          let bencixiadn = Math.abs(sumArray)*this.state.xintouzhu[global.bhpushu-(tempArry[0]).length];
+
+          xiadan += bencixiadn;
+          if((sumArray>0&&hs==1)||(sumArray<0&&hs==0)||(sumArray==0))//买
+          {
+            ying +=  bencixiadn*global.peilv;
+            zhong4 = (hs==1?'合单':'合双')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')中,  ';
+          }
+          else
+          {
+              zhong4 = (hs==0?'合单':'合双')+bencixiadn+'('+Math.abs(sumArray)+'X'+this.state.xintouzhu[global.bhpushu-(tempArry[0]).length]+')不中,  ';
+          }
+          for(let i=tempArry.length-1;i>=0;i--)
+          {
+            if(tempArry[i][0]==hs)
+            {
+              tempArry.splice(i,1);
+            }
+          }
+
+          if(tempArry.length>0&&(tempArry[0]).length>1)
+          {
+            for(let i=0;i<tempArry.length;i++)
+            {
+              (tempArry[i]).splice(0,1);
+            }
+          }
+          else  //特殊的结束
+          {
+            tempShow[i]['hs']=false;
+            ZCOrN[i]['hs'] = 1;
+            if(this.state.stop)
+            {
+              nhs=[undefined];
+              if((this.state.backupShow[i]['hs']).length!=0)
+              {
+                (global.jiangchiBackup).push((this.state.backupShow[i]['hs']).slice());
+                this.state.backupShow[i]['hs']=[]; 
+              } 
+            }
+            else
+            {
+              nhs = this.geOneArray();
+              (global.jiangchiBackup).push((this.state.backupShow[i]['hs']).slice());
+              this.state.backupShow[i]['hs'] = nhs.slice(); 
+            }           
+          }          
+      }       
+      else if(Number.parseInt(localAward[i]['hs'][0])==hs||tempShow[i]['hs']==false)
       {
           if(tempShow[i]['hs']==false&&this.state.stop)
           {
@@ -430,13 +676,13 @@ class Happy extends Component{
          // awardInfo.push('第'+this.state.serverResult.current.periodDate+'期第'+(i+1)+'球'+zhong);        
         if(nhs.length>1)
         {
-         // console.log('第'+(i+1)+'球大小没中奖');
-         // console.log(localAward[i]['dx']);
-          //let tempdx = ndx;
-          nhs.splice(0,1);
-         // ndx = tempdx;
-         // console.log(localAward[i]['dx']);
-        //  heshuA = this.state.heshu;
+          if(nhs.length>(global.pushu - global.zcpushu)+1)
+            nhs.splice(0,1);
+          else
+          {
+            ZCOrN[i]['hs'] = 0;
+            NShow[i]['hs'] = this.makeNshowArray();
+          }
         }
         else{
               nhs = this.geOneArray();
@@ -500,6 +746,26 @@ class Happy extends Component{
     }
 
   }
+  inputSucc2(input,num){
+    let touzhu = input;
+    if(touzhu==undefined||touzhu=='')
+      return false;
+    touzhu = touzhu.split('..');
+    if(touzhu.length == num)
+    {
+      for (let i = 0; i < touzhu.length; i++) {
+        touzhu[i]=Number.parseInt(touzhu[i]);
+        if(!touzhu[i])
+          return false;
+      }
+      this.setState({xintouzhu:touzhu});
+      return true;
+    }else
+    {
+      return false;
+    }
+
+  }  
   inputResultSucc(input,num){
     let touzhu = input;
     if(touzhu==undefined||touzhu=='')
@@ -531,10 +797,10 @@ class Happy extends Component{
       alert('请按格式输入！');
       return ;
     }
-
+    this.inputSucc2(global.xinjiner,global.bhpushu);
     if(!this.state.showing)
     {
-      backupDx=[];backupDs=[];backupWdx=[];backupHs=[];
+      backupDx=[];backupDs=[];backupWdx=[];backupHs=[];ZCOrN=[],NShow=[];
       for(let i=0;i<8;i++)
       {
         let dx = this.geOneArray();
@@ -555,6 +821,8 @@ class Happy extends Component{
         tempShow[i]=qiu;
         backupShow[i]=backupQiu;
         showQiuORNot[i]=showqiu;
+        ZCOrN[i]={dx:1,ds:1,wdx:1,hs:1};
+        NShow[i]={dx:[],ds:[],wdx:[],hs:[]};
         // this.setState({
         //   daxiao:daxiao,
         //   danshuang:danshuang,
@@ -618,35 +886,75 @@ class Happy extends Component{
   showArray(i,text)
   {
     let backupShow = this.state.backupShow;
-    if((backupShow).length>0)
+    if(ZCOrN[i][text]==0)
     {
-      backupShow = backupShow[i];
+      let sumArrayShow = NShow[i][text];
+      sumArrayShow = sumArrayShow.join("\n");
       if(text=='dx')
       {
-        backupShow = (backupShow[text]).join("-");
-        backupShow = (backupShow).replace(new RegExp(/(0)/g),'小');
-        backupShow = (backupShow).replace(new RegExp(/(1)/g),'大');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(0)/g),'小');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(1)/g),'大');
       }
       else if(text=='ds')
       {
-        backupShow = (backupShow[text]).join("-");
-        backupShow = (backupShow).replace(new RegExp(/(0)/g),'双');
-        backupShow = (backupShow).replace(new RegExp(/(1)/g),'单');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(0)/g),'双');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(1)/g),'单');
       }
       else if(text=='wdx')
       {
-        backupShow = (backupShow[text]).join("-");
-        backupShow = (backupShow).replace(new RegExp(/(0)/g),'尾小');
-        backupShow = (backupShow).replace(new RegExp(/(1)/g),'尾大');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(0)/g),'尾小');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(1)/g),'尾大');
       }
       else if(text=='hs')
       {
-        backupShow = (backupShow[text]).join("-");
-        backupShow = (backupShow).replace(new RegExp(/(0)/g),'合双');
-        backupShow = (backupShow).replace(new RegExp(/(1)/g),'合单');
-      }            
-      Alert.alert(backupShow);
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(0)/g),'合双');
+        sumArrayShow = (sumArrayShow).replace(new RegExp(/(1)/g),'合单');
+      }       
+      Alert.alert(sumArrayShow);
     }
+    else
+      if((backupShow).length>0)
+      {
+        backupShow = backupShow[i];
+        if(text=='dx')
+        {
+          backupShow = (backupShow[text]).join("-");
+          backupShow = (backupShow).replace(new RegExp(/(0)/g),'小');
+          backupShow = (backupShow).replace(new RegExp(/(1)/g),'大');
+        }
+        else if(text=='ds')
+        {
+          backupShow = (backupShow[text]).join("-");
+          backupShow = (backupShow).replace(new RegExp(/(0)/g),'双');
+          backupShow = (backupShow).replace(new RegExp(/(1)/g),'单');
+        }
+        else if(text=='wdx')
+        {
+          backupShow = (backupShow[text]).join("-");
+          backupShow = (backupShow).replace(new RegExp(/(0)/g),'尾小');
+          backupShow = (backupShow).replace(new RegExp(/(1)/g),'尾大');
+        }
+        else if(text=='hs')
+        {
+          backupShow = (backupShow[text]).join("-");
+          backupShow = (backupShow).replace(new RegExp(/(0)/g),'合双');
+          backupShow = (backupShow).replace(new RegExp(/(1)/g),'合单');
+        }            
+        Alert.alert(backupShow);
+      }
+  }
+  sumArray(arr)
+  {
+    let one=0,zore=0;
+    for(let i=0;i<arr.length;i++)
+    {
+      if(arr[i][0]==1)
+        one++;
+      else
+        zore++;
+    }
+
+    return one - zore;
   }
   makeItems(){
     let items=[];
@@ -655,13 +963,22 @@ class Happy extends Component{
     {
       let show = this.state.show;
       let xiazhu = this.state.touzhu;
+      let xinxiazhu = this.state.xintouzhu;
       let dx=[],ds=[],wdx=[],hs=[];
+      let newDx,newDs,newWdx,newHs;
       if(show.length>0)
       {
          dx = show[i]['dx'];
          ds = show[i]['ds'];
          wdx = show[i]['wdx'];
          hs = show[i]['hs'];
+      }
+      if(NShow.length>0)
+      {
+        newDx = NShow[i]['dx'];
+        newDs = NShow[i]['ds'];
+        newWdx = NShow[i]['wdx'];
+        newHs = NShow[i]['hs'];
       }
       item = (
           <View style={styles.inText} key={i}>
@@ -672,25 +989,29 @@ class Happy extends Component{
               <TouchableOpacity onPress={()=>this.showArray(i,'dx')}>
               <View style={styles.Text}><Text>大小</Text></View>
               </TouchableOpacity>
-              <View style={[styles.Text3]}><Text style={[styles.RText,dx[0]==1?{color:'red'}:{}]}>{dx[0]==undefined?null:(dx[0]==1?'大':'小')}{dx[0]==undefined?null:'('+xiazhu[global.pushu-dx.length]+')'}</Text></View>
+              <View style={[styles.Text3]}>{ZCOrN[i]===undefined?null:ZCOrN[i]['dx']==1?<Text style={[styles.RText,dx[0]==1?{color:'red'}:{}]}>{dx[0]==undefined?null:(dx[0]==1?'大':'小')}{dx[0]==undefined?null:'('+xiazhu[global.pushu-dx.length]+')'}</Text>:
+              <Text style={[styles.RText,this.sumArray(newDx)>0?{color:'red'}:{}]}>{this.sumArray(newDx)==0?null:this.sumArray(newDx)>0?'大':'小'}{'('+Math.abs(this.sumArray(newDx))*xinxiazhu[global.bhpushu-(newDx[0]).length]+')'}</Text>}</View>
             </View>
             <View style={styles.inText2}>
             <TouchableOpacity onPress={()=>this.showArray(i,'ds')}>
               <View style={styles.Text}><Text>单双</Text></View>
             </TouchableOpacity>  
-              <View style={[styles.Text3]}><Text style={[styles.RText,ds[0]==1?{color:'red'}:{}]}>{ds[0]==undefined?null:(ds[0]==1?'单':'双')}{ds[0]==undefined?null:'('+xiazhu[global.pushu-ds.length]+')'}</Text></View>
+              <View style={[styles.Text3]}>{ZCOrN[i]===undefined?null:ZCOrN[i]['ds']==1?<Text style={[styles.RText,ds[0]==1?{color:'red'}:{}]}>{ds[0]==undefined?null:(ds[0]==1?'单':'双')}{ds[0]==undefined?null:'('+xiazhu[global.pushu-ds.length]+')'}</Text>:
+              <Text style={[styles.RText,this.sumArray(newDs)>0?{color:'red'}:{}]}>{this.sumArray(newDs)==0?null:this.sumArray(newDs)>0?'单':'双'}{'('+Math.abs(this.sumArray(newDs))*xinxiazhu[global.bhpushu-(newDs[0]).length]+')'}</Text>}</View>
             </View>
             <View style={styles.inText2}>
             <TouchableOpacity onPress={()=>this.showArray(i,'wdx')}>
               <View style={styles.Text}><Text>尾大小</Text></View>
               </TouchableOpacity>
-              <View style={[styles.Text3]}><Text style={[styles.RText,wdx[0]==1?{color:'red'}:{}]}>{wdx[0]==undefined?null:(wdx[0]==1?'尾大':'尾小')}{wdx[0]==undefined?null:'('+xiazhu[global.pushu-wdx.length]+')'}</Text></View>
+              <View style={[styles.Text3]}>{ZCOrN[i]===undefined?null:ZCOrN[i]['wdx']==1?<Text style={[styles.RText,wdx[0]==1?{color:'red'}:{}]}>{wdx[0]==undefined?null:(wdx[0]==1?'尾大':'尾小')}{wdx[0]==undefined?null:'('+xiazhu[global.pushu-wdx.length]+')'}</Text>:
+              <Text style={[styles.RText,this.sumArray(newWdx)>0?{color:'red'}:{}]}>{this.sumArray(newWdx)==0?null:this.sumArray(newWdx)>0?'尾大':'尾小'}{'('+Math.abs(this.sumArray(newWdx))*xinxiazhu[global.bhpushu-(newWdx[0]).length]+')'}</Text>}</View>
             </View>
             <View style={styles.inText2}>
             <TouchableOpacity onPress={()=>this.showArray(i,'hs')}>
               <View style={styles.Text}><Text>合数</Text></View>
               </TouchableOpacity>
-              <View style={[styles.Text3]}><Text style={[styles.RText,hs[0]==1?{color:'red'}:{}]}>{hs[0]==undefined?null:(hs[0]==1?'合单':'合双')}{hs[0]==undefined?null:'('+xiazhu[global.pushu-hs.length]+')'}</Text></View>
+              <View style={[styles.Text3]}>{ZCOrN[i]===undefined?null:ZCOrN[i]['hs']==1?<Text style={[styles.RText,hs[0]==1?{color:'red'}:{}]}>{hs[0]==undefined?null:(hs[0]==1?'合单':'合双')}{hs[0]==undefined?null:'('+xiazhu[global.pushu-hs.length]+')'}</Text>:
+              <Text style={[styles.RText,this.sumArray(newHs)>0?{color:'red'}:{}]}>{this.sumArray(newHs)==0?null:this.sumArray(newHs)>0?'合单':'合双'}{'('+Math.abs(this.sumArray(newHs))*xinxiazhu[global.bhpushu-(newHs[0]).length]+')'}</Text>}</View>
             </View>
           </View>  );         
       items.push(item);
@@ -740,7 +1061,7 @@ class Happy extends Component{
               onPress={() => this.refreshDate()}
               label="刷新结果"
             />
-          <Text>          扑数:{global.pushu}           
+          <Text>          扑数:{global.pushu}     第 {global.zcpushu} 扑开始分散下注   首次分成 {global.shoucicishu} 次   每次 {global.bhpushu} 扑        
           </Text>
         </View>       
           <Text style={styles.inRText}>本次数据获取时服务器时间：{time}</Text>
@@ -769,14 +1090,10 @@ class Happy extends Component{
               underlineColorAndroid={'transparent'}
               textAlign='center'
               keyboardType={'numbers-and-punctuation'}
+              editable={false} 
               defaultValue={global.peilv?global.peilv+'':null}
-              onChangeText={(peilv) => {this.setState({peilv});global.peilv=peilv}}/> 
+              onChangeText={(peilv) => {this.setState({peilv});global.peilv=peilv}}/>
               <Text>    </Text>
-            <Button
-              color="#798BDA"   
-              onPress={() => this._gotoSet()}
-              label="设置"
-            />
             <Text>    </Text>            
           <Text style={styles.textContent}>投注金额:           
           </Text>
@@ -786,6 +1103,7 @@ class Happy extends Component{
               autoFocus={false}
               underlineColorAndroid={'transparent'}
               textAlign='center'
+              editable={false} 
               keyboardType={'numbers-and-punctuation'}
               defaultValue={global.jiner}
               onChangeText={(jiner) => {this.setState({jiner});global.jiner = jiner}}/> 
@@ -802,6 +1120,7 @@ class Happy extends Component{
               label="结束"
             />                    
         </View>
+         <Text style={styles.textContent}>     分多次后新的金额是：{global.xinjiner}    </Text>
         <View style = {{flex:1}}>
           <Text style={{width:300,height:30}}>第1期</Text>
           <View style={styles.Excel}>
@@ -847,7 +1166,7 @@ var styles = StyleSheet.create({
   container2:{
     flexDirection:'row',
     marginTop:10,
-    height:80
+    height:40
 
   },
   result:{

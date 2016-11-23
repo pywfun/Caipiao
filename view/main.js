@@ -21,8 +21,6 @@ var LuckFram = require('./luckfram');
 var Pk10 = require('./pk');
 var CQSSC = require('./cqssc');
 global.win=0;
-global.peilv;
-global.jiner;
 global.jiangchi=[];
 global.jiangchiBackup=[];
 class main extends Component {

@@ -297,6 +297,12 @@ class Happy extends Component{
                 this.state.backupShow[i]['dx']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['dx'] = 0;
+              NShow[i]['dx'] = this.makeNshowArray();
+
+            }            
             else
             {
               ndx = this.geOneArray();
@@ -340,8 +346,8 @@ class Happy extends Component{
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-ndx.length];
         zhong1 = (dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中,  ';
-        if(global.pushu==ndx.length)
-          tempShow[i]['dx']=false;        
+        // if(global.pushu==ndx.length)
+        //   tempShow[i]['dx']=false;        
         if(ndx.length>1)
         {
           if(ndx.length>(global.pushu - global.zcpushu)+1)
@@ -404,6 +410,12 @@ class Happy extends Component{
                 this.state.backupShow[i]['ds']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['ds'] = 0;
+              NShow[i]['ds'] = this.makeNshowArray();
+
+            }             
             else
             {
               nds = this.geOneArray();
@@ -451,8 +463,8 @@ class Happy extends Component{
         xiadan = xiadan+this.state.touzhu[global.pushu-nds.length];
           zhong2 = (ds==0?'单':'双')+this.state.touzhu[global.pushu-nds.length]+'不中,  ';
          // awardInfo.push('第'+this.state.serverResult.current.period+'期第'+(i+1)+'球'+zhong);
-        if(global.pushu==nds.length)
-          tempShow[i]['ds']=false;         
+        // if(global.pushu==nds.length)
+        //   tempShow[i]['ds']=false;         
         if(nds.length>1)
         {
           if(nds.length>(global.pushu - global.zcpushu)+1)
@@ -517,6 +529,12 @@ class Happy extends Component{
                 this.state.backupShow[i]['wdx']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['wdx'] = 0;
+              NShow[i]['wdx'] = this.makeNshowArray();
+
+            }             
             else
             {
               nwdx = this.geOneArray();
@@ -563,8 +581,8 @@ class Happy extends Component{
         xiadan = xiadan+this.state.touzhu[global.pushu-nwdx.length];
           //let zhong =':尾'+(wdx==0?'大':'小')+this.state.touzhu[global.pushu-nwdx.length]+'不中';
           zhong3 = '尾'+(wdx==0?'大':'小')+this.state.touzhu[global.pushu-nwdx.length]+'不中,  ';
-        if(global.pushu==nwdx.length)
-          tempShow[i]['wdx']=false;  
+        // if(global.pushu==nwdx.length)
+        //   tempShow[i]['wdx']=false;  
          // awardInfo.push('第'+this.state.serverResult.current.period+'期第'+(i+1)+'球'+zhong);        
         if(nwdx.length>1)
         {
@@ -628,6 +646,12 @@ class Happy extends Component{
                 this.state.backupShow[i]['hs']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['hs'] = 0;
+              NShow[i]['hs'] = this.makeNshowArray();
+
+            }              
             else
             {
               nhs = this.geOneArray();
@@ -671,8 +695,8 @@ class Happy extends Component{
       {
         xiadan = xiadan+this.state.touzhu[global.pushu-nhs.length];
           zhong4 ='合'+(hs==0?'单':'双')+this.state.touzhu[global.pushu-nhs.length]+'不中';
-        if(global.pushu==nhs.length)
-          tempShow[i]['hs']=false; 
+        // if(global.pushu==nhs.length)
+        //   tempShow[i]['hs']=false; 
          // awardInfo.push('第'+this.state.serverResult.current.period+'期第'+(i+1)+'球'+zhong);        
         if(nhs.length>1)
         {
@@ -821,8 +845,16 @@ class Happy extends Component{
         tempShow[i]=qiu;
         backupShow[i]=backupQiu;
         showQiuORNot[i]=showqiu;
+        if(global.zcpushu===0)
+      {
+        ZCOrN[i]={dx:0,ds:0,wdx:0,hs:0};
+        NShow[i]={dx:this.makeNshowArray(),ds:this.makeNshowArray(),wdx:this.makeNshowArray(),hs:this.makeNshowArray()};
+      }
+      else
+      {
         ZCOrN[i]={dx:1,ds:1,wdx:1,hs:1};
         NShow[i]={dx:[],ds:[],wdx:[],hs:[]};
+      }
         // this.setState({
         //   daxiao:daxiao,
         //   danshuang:danshuang,

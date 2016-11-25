@@ -67,7 +67,7 @@ class seting extends Component{
       Alert.alert("投注金额不对!");
       return ;
     }    
-    if(global.zcpushu<1)
+    if(global.zcpushu<0)
     {
       Alert.alert("正常扑数要大于0！");
       return ;

@@ -284,6 +284,12 @@ class pk extends Component{
                 this.state.backupShow[i]['dx']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['dx'] = 0;
+              NShow[i]['dx'] = this.makeNshowArray();
+
+            }            
             else
             {
               ndx = this.geOneArray();
@@ -395,6 +401,12 @@ class pk extends Component{
                 this.state.backupShow[i]['ds']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['ds'] = 0;
+              NShow[i]['ds'] = this.makeNshowArray();
+
+            }             
             else
             {
               nds = this.geOneArray();
@@ -507,6 +519,12 @@ class pk extends Component{
                   this.state.backupShow[i]['hs']=[]; 
                 } 
               }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['hs'] = 0;
+              NShow[i]['hs'] = this.makeNshowArray();
+
+            }                
               else
               {
                 nhs = this.geOneArray();
@@ -705,16 +723,32 @@ class pk extends Component{
           qiu = {dx:dx,ds:ds,hs:hs};
           backupQiu = {dx:dx,ds:ds,hs:hs};
           showqiu = {dx:true,ds:true,hs:true};
-          ZCOrN[i]={dx:1,ds:1,hs:1};
-          NShow[i]={dx:[],ds:[],hs:[]};
+            if(global.zcpushu===0)
+          {
+            ZCOrN[i]={dx:0,ds:0,hs:0};
+            NShow[i]={dx:this.makeNshowArray(),ds:this.makeNshowArray(),hs:this.makeNshowArray()};
+          }
+          else
+          {
+              ZCOrN[i]={dx:1,ds:1,hs:1};
+              NShow[i]={dx:[],ds:[],hs:[]};
+          }          
         }
         else
         {
           qiu = {dx:dx,ds:ds};
           backupQiu = {dx:dx,ds:ds};
           showqiu = {dx:true,ds:true};  
-          ZCOrN[i]={dx:1,ds:1};
-          NShow[i]={dx:[],ds:[]};        
+            if(global.zcpushu===0)
+          {
+            ZCOrN[i]={dx:0,ds:0};
+            NShow[i]={dx:this.makeNshowArray(),ds:this.makeNshowArray()};
+          }
+          else
+          {
+              ZCOrN[i]={dx:1,ds:1};
+              NShow[i]={dx:[],ds:[]};
+          }       
         }
         tempShow[i]=qiu;
         backupShow[i]=backupQiu;

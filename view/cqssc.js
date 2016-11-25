@@ -292,6 +292,12 @@ class cqssc extends Component{
                 this.state.backupShow[i]['dx']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['dx'] = 0;
+              NShow[i]['dx'] = this.makeNshowArray();
+
+            }            
             else
             {
               ndx = this.geOneArray();
@@ -406,6 +412,12 @@ class cqssc extends Component{
                 this.state.backupShow[i]['ds']=[]; 
               } 
             }
+            else if(global.zcpushu===0)
+            {
+              ZCOrN[i]['ds'] = 0;
+              NShow[i]['ds'] = this.makeNshowArray();
+
+            }             
             else
             {
               nds = this.geOneArray();
@@ -612,8 +624,16 @@ class cqssc extends Component{
         tempShow[i]=qiu;
         backupShow[i]=backupQiu;
         showQiuORNot[i]=showqiu;
+        if(global.zcpushu===0)
+      {
+        ZCOrN[i]={dx:0,ds:0};
+        NShow[i]={dx:this.makeNshowArray(),ds:this.makeNshowArray()};
+      }
+      else
+      {
         ZCOrN[i]={dx:1,ds:1};
         NShow[i]={dx:[],ds:[]};
+      }        
         // this.setState({
         //   daxiao:daxiao,
         //   danshuang:danshuang,

@@ -69,7 +69,7 @@ class seting extends Component{
     }    
     if(global.zcpushu<0)
     {
-      Alert.alert("正常扑数要大于0！");
+      Alert.alert("正常扑数要大于等于0！");
       return ;
     }
     if(global.bhpushu<5)

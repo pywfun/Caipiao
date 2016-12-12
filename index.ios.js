@@ -19,10 +19,13 @@ import {
   Alert
 } from 'react-native';
 
+import a from './view/base';
+import b from './view/baseAward';
 var Main = require('./view/main');
-global.pushu ,global.zcpushu = 0 ,global.bhpushu = 0,global.peilv=0,global.shoucicishu;
-// global.pushu = 7 ,global.zcpushu = 1 ,global.bhpushu = 7,global.peilv=2,global.shoucicishu=15,global.jiner='1..2..3..4..5..6..7';
-// global.xinjiner = '11..22..33..44..55..66..77';
+
+global.pushu = 7,global.zcpushu = 7 ,global.bhpushu = 7,global.peilv=0,global.shoucicishu=15;
+ //global.pushu = 7 ,global.zcpushu = 7 ,global.bhpushu = 7,global.peilv=2,global.shoucicishu=15,global.jiner='1..2..3..4..5..6..7';
+ global.xinjiner = '11..22..33..44..55..66..77';
 class Button extends Component{
   render() {
     return (
@@ -136,7 +139,8 @@ class seting extends Component{
                 underlineColorAndroid={'transparent'}
                 textAlign='center'
                 keyboardType={'numeric'}
-                defaultValue={global.pushu}
+                editable={false} 
+                defaultValue={global.pushu+''}
                 onChangeText={(pushu) => {global.pushu =Number.parseInt(pushu)}}/> 
           <Text style={styles.textContent}>投注金额:           
           </Text>
@@ -150,6 +154,7 @@ class seting extends Component{
               defaultValue={global.jiner}
               onChangeText={(jiner) => {global.jiner = jiner}}/>                 
             </View>
+            {false?
           <View style = {styles.container3}>
               <Text style={styles.textContent}>前多少扑正常:           
               </Text>
@@ -158,10 +163,13 @@ class seting extends Component{
                   numberOfLines={1}
                   autoFocus={false}
                   underlineColorAndroid={'transparent'}
+                  editable={false} 
                   textAlign='center'
                   keyboardType={'numeric'}
+                  defaultValue={global.zcpushu+''}
                   onChangeText={(pushu) => {global.zcpushu =Number.parseInt(pushu)}}/> 
-              </View> 
+              </View>:null }
+          {false? 
           <View style = {styles.container3}>
               <Text style={styles.textContent}>新的扑数:           
               </Text>
@@ -172,6 +180,7 @@ class seting extends Component{
                   underlineColorAndroid={'transparent'}
                   textAlign='center'
                   keyboardType={'numeric'}
+                  defaultValue={global.bhpushu+''}
                   onChangeText={(pushu) => {global.bhpushu =Number.parseInt(pushu)}}/>
               <Text style={styles.textContent}>新投注金额:           
               </Text>
@@ -184,7 +193,8 @@ class seting extends Component{
                   keyboardType={'numbers-and-punctuation'}
                   defaultValue={global.xinjiner}
                   onChangeText={(jiner) => {global.xinjiner = jiner}}/>                    
-          </View> 
+          </View>:null }
+          {false?   
           <View style = {styles.container3}>
               <Text style={styles.textContent}>变化之后首次分多少次投注:           
               </Text>
@@ -195,9 +205,9 @@ class seting extends Component{
                   underlineColorAndroid={'transparent'}
                   textAlign='center'
                   keyboardType={'numeric'}
-                  defaultValue={global.shoucicishu}
+                  defaultValue={global.shoucicishu+''}
                   onChangeText={(shoucicishu) => {global.shoucicishu =Number.parseInt(shoucicishu)}}/> 
-          </View>           
+          </View> :null }        
           <View style = {styles.container3}>
           <Text style={styles.textContent}>赔率:           
           </Text>

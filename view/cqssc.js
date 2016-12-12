@@ -26,6 +26,7 @@ var backupDx=[],backupDs=[],backupWdx=[],backupHs=[];
 var result , countDownTime ;
 var awardInfo =[];
 var showQiuORNot=[],LastWin=[],ZCOrN = [], NShow = [];
+var awardResult=[],beforeAward=[];
 var QIUNUMBER=5;
 class Button extends Component{
   render() {
@@ -68,6 +69,7 @@ class cqssc extends Component{
       showQiuORNot:[],
       backupShow:[],
       xintouzhu:[],
+      yiqianjieguo:'',
     };
   }
   componentDidMount() {
@@ -227,6 +229,15 @@ class cqssc extends Component{
       tempShow = this.makeTRUEArray();
     else
       tempShow = LastWin.slice();
+
+    for(let p=0;p<QIUNUMBER+1;p++)
+    {
+      award[p] = Number.parseInt(award[p]);
+    }
+    awardResult.push(award);
+    awardResult.splice(0,1);
+    this.clcBResult();
+
     for(let i=0;i<QIUNUMBER+1;i++)
     {
       ndx =(localAward[i]['dx']).slice();
@@ -300,7 +311,7 @@ class cqssc extends Component{
             }            
             else
             {
-              ndx = this.geOneArray();
+              ndx = this.arrayAward(beforeAward[i]['dx']);
               (global.jiangchiBackup).push((this.state.backupShow[i]['dx']).slice());
               this.state.backupShow[i]['dx'] = ndx.slice(); 
             }           
@@ -331,7 +342,7 @@ class cqssc extends Component{
             }
             else
             {
-              ndx = this.geOneArray();
+              ndx = this.arrayAward(beforeAward[i]['dx']);
               (global.jiangchiBackup).push((this.state.backupShow[i]['dx']).slice());
               this.state.backupShow[i]['dx'] = ndx.slice();
             }
@@ -339,17 +350,17 @@ class cqssc extends Component{
       }
       else
       {
-        xiadan = xiadan+this.state.touzhu[global.pushu-ndx.length];
-        // let xianshi;
-        // if(i<QIUNUMBER)
-        //   xianshi = '期第'+(i+1)+'球';
-        // else
-        //   xianshi = '期总和';
-        //let zhong =':'+(dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中';
-        zhong1 = (dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中,  ';
-        // if(global.pushu==ndx.length)
-        //   tempShow[i]['dx']=false;
-        //awardInfo.push('第'+this.state.serverResult.current.periodDate+xianshi+zhong);
+        if(ndx[0]!=undefined)
+        {
+          xiadan = xiadan+this.state.touzhu[global.pushu-ndx.length];
+
+          zhong1 = (dx==0?'大':'小')+this.state.touzhu[global.pushu-ndx.length]+'不中,  ';
+        }
+        else
+        {
+          tempShow[i]['dx']=false;
+        }
+
         if((ndx).length>1)
         {
           if(ndx.length>(global.pushu - global.zcpushu)+1)
@@ -361,7 +372,7 @@ class cqssc extends Component{
           }
         }
         else{
-              ndx = this.geOneArray();
+              ndx = this.arrayAward(beforeAward[i]['dx']);
               (global.jiangchiBackup).push((this.state.backupShow[i]['dx']).slice());
               this.state.backupShow[i]['dx'] = ndx.slice();
         }        
@@ -420,7 +431,7 @@ class cqssc extends Component{
             }             
             else
             {
-              nds = this.geOneArray();
+              nds = this.arrayAward(beforeAward[i]['ds']);
               (global.jiangchiBackup).push((this.state.backupShow[i]['ds']).slice());
               this.state.backupShow[i]['ds'] = nds.slice(); 
             }           
@@ -454,7 +465,7 @@ class cqssc extends Component{
             }
             else
             {
-              nds = this.geOneArray();
+              nds = this.arrayAward(beforeAward[i]['ds']);
               (global.jiangchiBackup).push((this.state.backupShow[i]['ds']).slice());
               this.state.backupShow[i]['ds'] = nds.slice();
             }               
@@ -462,6 +473,8 @@ class cqssc extends Component{
       }
       else
       {
+        if(nds[0]!=undefined)
+        {
         xiadan = xiadan+this.state.touzhu[global.pushu-nds.length];
         // if(global.pushu==nds.length)
         //   tempShow[i]['ds']=false;
@@ -472,6 +485,11 @@ class cqssc extends Component{
         //   xianshi = '期总和';
         //   let zhong =':' +(ds==0?'单':'双')+this.state.touzhu[global.pushu-nds.length]+'不中';
           zhong2 = (ds==0?'单':'双')+this.state.touzhu[global.pushu-nds.length]+'不中';
+        }
+        else
+        {
+          tempShow[i]['ds']=false;
+        }
         // awardInfo.push('第'+this.state.serverResult.current.periodDate+xianshi+zhong);
         if((nds).length>1)
         {
@@ -484,7 +502,7 @@ class cqssc extends Component{
           }
         }
         else{
-              nds = this.geOneArray();
+              nds = this.arrayAward(beforeAward[i]['ds']);
               (global.jiangchiBackup).push((this.state.backupShow[i]['ds']).slice());
               this.state.backupShow[i]['ds'] = nds.slice(); 
         }        
@@ -584,7 +602,39 @@ class cqssc extends Component{
       return false;
     }
 
-  }     
+  }
+  clcBResult(){
+    let dxA=[],dsA=[]
+    beforeAward = [];
+    for(let i=0;i<QIUNUMBER+1;i++)
+    {
+      dxA=[];dsA=[];
+
+      for(let j=0;j<global.pushu;j++)
+      {
+        let awardNum = awardResult[j][i];
+        let dx = awardNum<=4?0:1;
+        let ds = awardNum%2==1?1:0;
+        if(i==QIUNUMBER)
+        {
+            let awardSum = this.getAwardSum(awardResult[j]);
+            dx=awardSum<=22?0:1;
+            ds=awardSum%2==1?1:0;
+        }
+        dxA.push(dx);dsA.push(ds);
+      }
+      let temp = {dx:dxA,ds:dsA};
+      beforeAward.push(temp);  
+    }
+  }
+  arrayAward(arr){
+    for(let i=0;i<(global.base).length;i++)
+    {
+      if((global.base)[i].toString()===arr.toString())
+        return (global.baseAward)[i];
+    }
+    return [undefined];
+  }       
   _gotoWork(){
     let tempShow=[],tempShowQiu=[],backupShow=[];
     if(global.peilv==0)
@@ -597,16 +647,22 @@ class cqssc extends Component{
       alert('请按格式输入！');
       return ;
     }
+    if(awardResult.length<7)
+    {
+       alert('请先输入前7扑结果！');
+      return ;     
+    }
     this.inputSucc2(global.xinjiner,global.bhpushu);
     if(!this.state.showing)
     {
       backupDx=[];backupDs=[];backupHs=[];ZCOrN=[],NShow=[];
+      this.clcBResult();
       for(let i=0;i<QIUNUMBER+1;i++)
       {
-        let dx = this.geOneArray();
+        let dx = this.arrayAward(beforeAward[i]['dx']);
        // backupDx.push(dx);
         //var daxiao = this.removeItem(this.state.daxiao,dx);
-        let ds = this.geOneArray();
+        let ds = this.arrayAward(beforeAward[i]['ds']);
        // backupDs.push(ds);
        // var danshuang = this.removeItem(this.state.danshuang,ds);
         //var wdx = this.geOneArrayFrom(this.state.weidaxiao);
@@ -661,6 +717,22 @@ class cqssc extends Component{
     let jieguo = this.state.jieguo;
     jieguo = jieguo.replace(/\.\./g,',');
     this.award(jieguo);
+
+  }
+  _setResult(){
+    if(!this.inputResultSucc(this.state.yiqianjieguo,QIUNUMBER))
+    {
+      alert('请按格式输入！');
+      return ;
+    }
+    let result = (this.state.yiqianjieguo).split('..');
+    for(let i=0;i<result.length;i++)
+    {
+      result[i]=Number.parseInt(result[i]);
+    }
+    awardResult.push(result);
+    this.setState({yiqianjieguo:''});
+
 
   }
   _gotoStop(){
@@ -924,8 +996,9 @@ class cqssc extends Component{
           <ScrollView style={{flex:1,marginTop:15}}>
           {this.makeText()}
           </ScrollView>          
-          <View style={styles.container2}> 
-            <Text style={styles.textContent}>手动输入结果:           
+          { awardResult.length<7?         
+          <View style={styles.container3}> 
+            <Text style={styles.textContent}>手动输入前7扑结果(已有{awardResult.length}):           
             </Text>
               <TextInput style={styles.style_user_input}
                 placeholder='1..2..3..4..5'
@@ -934,14 +1007,16 @@ class cqssc extends Component{
                 underlineColorAndroid={'transparent'}
                 textAlign='center'
                 keyboardType={'numbers-and-punctuation'}          
-                onChangeText={(jieguo) => this.setState({jieguo})}/> 
+                defaultValue={this.state.yiqianjieguo}          
+                onChangeText={(yiqianjieguo) => this.setState({yiqianjieguo})}/> 
                 <Text>         </Text>
             <Button
                 color="#798BDA"   
-                onPress={() => this._gotoResult()}
+                onPress={() => this._setResult()}
                 label="确定"
               />
-            </View>                  
+            </View>:null  
+            }                 
         </View>                            
       </View> 
     );
@@ -960,6 +1035,12 @@ var styles = StyleSheet.create({
     height:40
 
   },
+  container3:{
+    flexDirection:'row',
+    marginBottom:80,
+    height:40
+
+  },  
   result:{
     flexDirection:'column',
     marginTop:10,

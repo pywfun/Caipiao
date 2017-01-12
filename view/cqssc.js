@@ -911,7 +911,7 @@ class cqssc extends Component{
               label="结束"
             />                    
         </View>
-        <Text style={styles.textContent}>     分多次后新的金额是：{global.xinjiner}    </Text>
+        {false?<Text style={styles.textContent}>     分多次后新的金额是：{global.xinjiner}    </Text>:null}
         <View style = {{flex:1}}>
           <Text style={{width:300,height:30}}>第1期</Text>
           <View style={styles.Excel}>
@@ -924,7 +924,7 @@ class cqssc extends Component{
           <ScrollView style={{flex:1,marginTop:15}}>
           {this.makeText()}
           </ScrollView>          
-          <View style={styles.container2}> 
+          <View style={styles.container3}> 
             <Text style={styles.textContent}>手动输入结果:           
             </Text>
               <TextInput style={styles.style_user_input}
@@ -957,6 +957,12 @@ var styles = StyleSheet.create({
   container2:{
     flexDirection:'row',
     marginTop:10,
+    height:40
+
+  },
+      container3:{
+    flexDirection:'row',
+    marginBottom:80,
     height:40
 
   },

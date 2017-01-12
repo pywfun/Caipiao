@@ -20,9 +20,9 @@ import {
 } from 'react-native';
 
 var Main = require('./view/main');
-global.pushu ,global.zcpushu = 0 ,global.bhpushu = 0,global.peilv=0,global.shoucicishu;
+global.pushu ,global.zcpushu = 0 ,global.bhpushu = 8,global.peilv=0,global.shoucicishu=1;
 // global.pushu = 7 ,global.zcpushu = 1 ,global.bhpushu = 7,global.peilv=2,global.shoucicishu=15,global.jiner='1..2..3..4..5..6..7';
-// global.xinjiner = '11..22..33..44..55..66..77';
+ global.xinjiner = '0..0..0..0..0..0..0';
 class Button extends Component{
   render() {
     return (
@@ -82,21 +82,27 @@ class seting extends Component{
       Alert.alert("正常扑数加新扑数要大于总扑数！");
       return ;
     }
-    if(!this.inputResultSucc(global.xinjiner,global.bhpushu))
-    {
-      Alert.alert("新投注金额不对!");
-      return ;
-    } 
+    // if(!this.inputResultSucc(global.xinjiner,global.bhpushu))
+    // {
+    //   Alert.alert("新投注金额不对!");
+    //   return ;
+    // } 
     if(!(global.shoucicishu>0))
     {
       Alert.alert("请设置新的首次投注次数！");
       return ;
-    }         
+    }  
+    if(!this.inputResultSucc2(global.xiazhu,global.pushu))
+    {
+      Alert.alert("投注不对!");
+      return ;
+    }          
     if(!(global.peilv>0))
     {
       Alert.alert("请设置赔率");
       return ;
-    }    
+    }
+   
       this.props.navigator.resetTo({
         component:Main,
         params:{
@@ -121,7 +127,31 @@ class seting extends Component{
       return false;
     }
 
-  }  
+  } 
+    inputResultSucc2(input,num){
+    let touzhu = input;
+    if(touzhu==undefined||touzhu=='')
+      return false;    
+    touzhu = touzhu.split('..');
+    if(touzhu.length == num)
+    {
+      for (let i = 0; i < touzhu.length; i++) {
+        touzhu[i]=Number.parseInt(touzhu[i]);
+        if(touzhu[i]== 0 || touzhu[i]== 1)
+        {
+          
+        }
+        else
+          return false;
+      }
+      global.xiazhu = touzhu;
+      return true;
+    }else
+    {
+      return false;
+    }
+
+  }   
   render(){
     return(
       <View style = {styles.container}>
@@ -137,7 +167,7 @@ class seting extends Component{
                 textAlign='center'
                 keyboardType={'numeric'}
                 defaultValue={global.pushu}
-                onChangeText={(pushu) => {global.pushu =Number.parseInt(pushu)}}/> 
+                onChangeText={(pushu) => {global.pushu =Number.parseInt(pushu);global.zcpushu = global.pushu;}}/> 
           <Text style={styles.textContent}>投注金额:           
           </Text>
             <TextInput style={styles.style_user_input2}
@@ -150,6 +180,7 @@ class seting extends Component{
               defaultValue={global.jiner}
               onChangeText={(jiner) => {global.jiner = jiner}}/>                 
             </View>
+            {false?
           <View style = {styles.container3}>
               <Text style={styles.textContent}>前多少扑正常:           
               </Text>
@@ -161,7 +192,8 @@ class seting extends Component{
                   textAlign='center'
                   keyboardType={'numeric'}
                   onChangeText={(pushu) => {global.zcpushu =Number.parseInt(pushu)}}/> 
-              </View> 
+              </View>:null}
+              {false? 
           <View style = {styles.container3}>
               <Text style={styles.textContent}>新的扑数:           
               </Text>
@@ -184,7 +216,8 @@ class seting extends Component{
                   keyboardType={'numbers-and-punctuation'}
                   defaultValue={global.xinjiner}
                   onChangeText={(jiner) => {global.xinjiner = jiner}}/>                    
-          </View> 
+          </View> :null}
+           {false? 
           <View style = {styles.container3}>
               <Text style={styles.textContent}>变化之后首次分多少次投注:           
               </Text>
@@ -197,7 +230,20 @@ class seting extends Component{
                   keyboardType={'numeric'}
                   defaultValue={global.shoucicishu}
                   onChangeText={(shoucicishu) => {global.shoucicishu =Number.parseInt(shoucicishu)}}/> 
-          </View>           
+          </View>   :null}
+          <View style = {styles.container3}>
+              <Text style={styles.textContent}>投注(1代表大，0代表小）:           
+              </Text>
+                <TextInput style={styles.style_user_input2}
+                  placeholder='1..0..1..0..与扑数相同'
+                  numberOfLines={1}
+                  autoFocus={false}
+                  underlineColorAndroid={'transparent'}
+                  textAlign='center'
+                  keyboardType={'numbers-and-punctuation'}
+                  defaultValue={global.xiazhu}
+                  onChangeText={(xiazhu) => {global.xiazhu = xiazhu}}/>                    
+          </View>        
           <View style = {styles.container3}>
           <Text style={styles.textContent}>赔率:           
           </Text>

@@ -46,7 +46,6 @@ class main extends Component {
     {
       let num = this.prefix(global.pushu,i.toString(2));
       temp = num.split("");
-      temp =  global.xiazhu ;
       result.push(temp);     
     }
     global.jiangchi = result; 
